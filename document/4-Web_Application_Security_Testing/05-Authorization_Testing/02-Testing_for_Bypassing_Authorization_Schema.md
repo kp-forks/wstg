@@ -16,7 +16,7 @@ For every specific role the tester holds during the assessment and for every fun
 
 Try to access the application as an administrative user and track all the administrative functions.
 
-- Is it possible to access administrative functions if the tester is logged in as a  non-admin user?
+- Is it possible to access administrative functions if the tester is logged in as a non-admin user?
 - Is it possible to use these administrative functions as a user with a different role and for whom that action should be denied?
 
 ## Test Objectives
@@ -79,76 +79,6 @@ username=example_user
 
 If the attacker's response contain the data of the `example_user`, then the application is vulnerable for lateral movement attacks, where a user can read or write other user's data.
 
-### Testing for Vertical Bypassing Authorization Schema
-
-A vertical authorization bypass is specific to the case that an attacker obtains a role higher than their own. Testing for this bypass focuses on verifying how the vertical authorization schema has been implemented for each role. For every function, page, specific role, or request that the application executes, it is necessary to verify if it is possible to:
-
-- Access resources that should be accessible only to a higher role user.
-- Operate functions on resources that should be operative only by a user that holds a higher or specific role identity.
-
-For each role:
-
-1. Register a user.
-2. Establish and maintain two different sessions based on the two different roles.
-3. For every request, change the session identifier from the original to another role's session identifier and evaluate the responses for each.
-4. An application will be considered vulnerable if the weaker privileged session contains the same data, or indicate successful operations on higher privileged functions.
-
-#### Banking Site Roles Scenario
-
-The following table illustrates the system roles on a banking site. Each role binds with specific permissions for the event menu functionality:
-
-|      ROLE     |     PERMISSION    | ADDITIONAL PERMISSION |
-|---------------|-------------------|-----------------------|
-| Administrator | Full Control      | Delete                |
-| Manager       | Modify, Add, Read | Add                   |
-| Staff         | Read, Modify      | Modify                |
-| Customer      | Read Only         |                       |
-
-The application will be considered vulnerable if the:
-
-1. Customer could operate administrator, manager or staff functions;
-2. Staff user could operate manager or administrator functions;
-3. Manager could operate administrator functions.
-
-Suppose that the `deleteEvent` function is part of the administrator account menu of the application, and it is possible to access it by requesting the following URL: `https://www.example.com/account/deleteEvent`. Then, the following HTTP request is generated when calling the `deleteEvent` function:
-
-```http
-POST /account/deleteEvent HTTP/1.1
-Host: www.example.com
-[other HTTP headers]
-Cookie: SessionID=ADMINISTRATOR_USER_SESSION
-
-EventID=1000001
-```
-
-The valid response:
-
-```http
-HTTP/1.1 200 OK
-[other HTTP headers]
-
-{"message": "Event was deleted"}
-```
-
-The attacker may try and execute the same request:
-
-```http
-POST /account/deleteEvent HTTP/1.1
-Host: www.example.com
-[other HTTP headers]
-Cookie: SessionID=CUSTOMER_USER_SESSION
-
-EventID=1000002
-```
-
-If the response of the attacker’s request contains the same data `{"message": "Event was deleted"}` the application is vulnerable.
-
-#### Administrator Page Access
-
-Suppose that the administrator menu is part of the administrator account.
-
-The application will be considered vulnerable if any role other than administrator could access the administrator menu. Sometimes, developers perform authorization validation at the GUI level only, and leave the functions without authorization validation, thus potentially resulting in a vulnerability.
-
 ### Testing for Access to Administrative Functions
 
 For example, suppose that the `addUser` function is part of the administrative menu of the application, and it is possible to access it by requesting the following URL `https://www.example.com/admin/addUser`.
@@ -181,7 +111,7 @@ Some applications support non-standard headers such as `X-Original-URL` or `X-Re
 
 This behavior can be leveraged in a situation in which the application is behind a component that applies access control restriction based on the request URL.
 
-The kind of access control restriction based on the request URL can be, for example, blocking access from Internet to an administration console exposed on `/console` or `/admin`.
+The kind of access control restriction based on the request URL can be, for example, blocking access from internet to an administration console exposed on `/console` or `/admin`.
 
 To detect the support for the header `X-Original-URL` or `X-Rewrite-URL`, the following steps can be applied.
 
@@ -213,7 +143,7 @@ X-Rewrite-URL: /donotexist2
 
 If the response for either request contains markers that the resource was not found, this indicates that the application supports the special request headers. These markers may include the HTTP response status code 404, or a "resource not found" message in the response body.
 
-Once the support for the header `X-Original-URL` or `X-Rewrite-URL` was validated then the tentative of bypass against the access control restriction can be leveraged by sending the expected request to the application but specifying a URL "allowed" by the front-end component as the main request URL and specifying the real target URL in the `X-Original-URL` or `X-Rewrite-URL` header depending on the one supported. If both are supported then try one after the other to verify for which header the bypass is effective.
+Once the support for the header `X-Original-URL` or `X-Rewrite-URL` was validated then the tentative of bypass against the access control restriction can be leveraged by sending the expected request to the application but specifying a URL "allowed" by the frontend component as the main request URL and specifying the real target URL in the `X-Original-URL` or `X-Rewrite-URL` header depending on the one supported. If both are supported then try one after the other to verify for which header the bypass is effective.
 
 #### 4. Other Headers to Consider
 
@@ -244,7 +174,7 @@ Employ the least privilege principles on the users, roles, and resources to ensu
 
 ## Tools
 
-- [OWASP Zed Attack Proxy (ZAP)](https://www.zaproxy.org/)
+- [Zed Attack Proxy (ZAP)](https://www.zaproxy.org/)
     - [ZAP add-on: Access Control Testing](https://www.zaproxy.org/docs/desktop/addons/access-control-testing/)
 - [Port Swigger Burp Suite](https://portswigger.net/burp)
     - [Burp extension: AuthMatrix](https://github.com/SecurityInnovation/AuthMatrix/)
