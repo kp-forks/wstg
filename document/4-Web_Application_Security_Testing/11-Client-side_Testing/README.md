@@ -2,6 +2,8 @@
 
 4.11.1 [Testing for DOM-Based Cross Site Scripting](01-Testing_for_DOM-based_Cross_Site_Scripting.md)
 
+- 4.11.1.1 [Testing for Self DOM Based Cross Site Scripting](01.1-Testing_for_Self_DOM_Based_Cross_Site_Scripting.md)
+
 4.11.2 [Testing for JavaScript Execution](02-Testing_for_JavaScript_Execution.md)
 
 4.11.3 [Testing for HTML Injection](03-Testing_for_HTML_Injection.md)
@@ -25,3 +27,5 @@
 4.11.12 [Testing Browser Storage](12-Testing_Browser_Storage.md)
 
 4.11.13 [Testing for Cross Site Script Inclusion](13-Testing_for_Cross_Site_Script_Inclusion.md)
+
+4.11.14 [Testing for Reverse Tabnabbing](14-Testing_for_Reverse_Tabnabbing.md)
