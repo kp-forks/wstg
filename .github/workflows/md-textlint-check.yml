@@ -27,7 +27,7 @@ jobs:
         ref: ${{ github.event.pull_request.head.sha }}
         path: pr
         fetch-depth: 0
-    - name: Save PR number
+    - name: Save PR Number
       env:
         PR_NUMBER: ${{ github.event.number }}
       run: echo $PR_NUMBER > pr_number
@@ -35,7 +35,12 @@ jobs:
       uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6
       with:
         node-version: 24
-    - name: Install dependencies
+    - name: Cache npm Global
+      uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-npm-global-textlint
+    - name: Install Dependencies
       run: |
         npm install -g textlint
         npm install -g textlint-rule-terminology
@@ -67,13 +72,13 @@ jobs:
         cat log.txt
         cat log.txt | grep -v '✔ Fixed' | tr '✔' '✖' > mistakes.txt
         sed -i 's/✖/❌/g' mistakes.txt
-    - name: Create artifact for comment
+    - name: Create Artifact for Comment
       if: failure()
       run: |
         echo "**The following mistakes were identified:**" > artifact.txt
         # Copy to generic name for commenting
         cat mistakes.txt | tee -a artifact.txt
-    - name: Upload list of mistakes
+    - name: Upload List of Mistakes
       if: failure()
       uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
       with:
@@ -81,7 +86,7 @@ jobs:
         path: |
           artifact.txt
           pr_number
-    - name: Upload PR number on success
+    - name: Upload PR Number on Success
       if: success()
       uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
       with:
